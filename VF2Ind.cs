@@ -38,20 +38,16 @@ namespace GraphRewriteEngine
                     }
                 }
             }
-
-            //The induced subgraphs (needed for neighbor operations)
-            //Would it be better to have these near the beginning and not save D, R, E1, E2?
-            var G1 = GraphExtensions.ToUndirectedGraph<Node, LEdge>(E1);
-            var G2 = GraphExtensions.ToUndirectedGraph<Node, LEdge>(E2);
-
-            foreach (Node v in G2.AdjacentVertices(p[1]).Intersect(R)) {
-                if (!G1.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Equals(v)).Key))) { //guaranteed to exist since bijection check passed
+            //In fact, the induced subgraphs are only useful for Cons(m)
+            //For the following checks, we use the global graphs (global vertex/edge sets, as delineated in the paper)
+            foreach (Node v in host.AdjacentVertices(p[1]).Intersect(R)) { //OH RIGHT, p[0] or p[1] are not in the graph induced by D(m)/R(m). Use global graph? Or maybe induced by D(ext(m,p))
+                if (!pattern.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Equals(v)).Key))) { //guaranteed to exist since bijection check passed
                     return false;
                 }
             }
 
-            foreach (Node u in G1.AdjacentVertices(p[0]).Intersect(D)) {
-                if (!G2.Edges.Contains(new LEdge(p[1], m.M[u]))) {
+            foreach (Node u in pattern.AdjacentVertices(p[0]).Intersect(D)) {
+                if (!host.Edges.Contains(new LEdge(p[1], m.M[u]))) {
                     return false;
                 }
             }
@@ -69,7 +65,7 @@ namespace GraphRewriteEngine
             IEnumerable<Node> uV1 = pattern.Vertices.Except(D);
             IEnumerable<Node> uV2 = host.Vertices.Except(R);
             IEnumerable<Node> T1 = uV1.Where(node => ExistsUncoveredNeighbor(node, D, pattern));
-            IEnumerable<Node> T2 = uV1.Where(node => ExistsUncoveredNeighbor(node, R, host));
+            IEnumerable<Node> T2 = uV2.Where(node => ExistsUncoveredNeighbor(node, R, host));
 
             //The T hats
             IEnumerable<Node> TH1 = uV1.Except(T1);
