@@ -5,16 +5,16 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class LEdge : IEdge<Node> {
+    public class LEdge : IEdge<Node>, IEquatable<LEdge>, ITagged<string> {
 
-        public string Label { get; set; }
+        public string Tag { get; set; }
         public Node Source { get; set; }
         public Node Target { get; set; }
 
-        public LEdge(Node a, Node b, string label) {
+        public LEdge(Node a, Node b, string tag) {
             this.Source = a;
             this.Source = b;
-            this.Label = label;
+            this.Tag = tag;
         }
 
         public override int GetHashCode()
@@ -29,7 +29,7 @@ namespace GraphRewriteEngine
 
         public override string ToString()
         {
-            return $"e({this.Source.ToString()}, {this.Target.ToString()}):L.{this.Label}";
+            return $"e({this.Source.ToString()}, {this.Target.ToString()}):L.{this.Tag}";
         }
 
         //Should this be two-sided?
@@ -41,8 +41,12 @@ namespace GraphRewriteEngine
         }
 
         public bool IsEquivalent(LEdge e) {
-            return this.Label.Equals(e.Label);
+            return this.Tag.Equals(e.Tag);
         }
+
+        public event EventHandler TagChanged;
+
+
 
     }
 

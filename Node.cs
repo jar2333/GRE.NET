@@ -4,14 +4,14 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class Node {
+    public class Node : ITagged<string> {
         
         public int Index {get; set;}
-        public string Label {get; set;}
+        public string Tag {get; set;}
 
-        public Node(int index, string label) {
+        public Node(int index, string tag) {
             this.Index = index;
-            this.Label = label;
+            this.Tag = tag;
         }
 
         //overriding for hashing purposes
@@ -28,7 +28,7 @@ namespace GraphRewriteEngine
         //defining for convinience
         public override string ToString()
         {
-            return $"v{this.Index}:L.{this.Label}";
+            return $"v{this.Index}:L.{this.Tag}";
         }
 
         //to define overwritten
@@ -41,7 +41,9 @@ namespace GraphRewriteEngine
 
         //label equivalence is not node equality
         public bool IsEquivalent(Node n) {
-            return this.Label.Equals(n.Label);
+            return this.Tag.Equals(n.Tag);
         }
+
+        public event EventHandler TagChanged;
     }
 }
