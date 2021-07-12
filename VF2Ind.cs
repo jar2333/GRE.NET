@@ -45,7 +45,7 @@ namespace GraphRewriteEngine
             var G2 = GraphExtensions.ToUndirectedGraph<Node, LEdge>(E2);
 
             foreach (Node v in G2.AdjacentVertices(p[1]).Intersect(R)) {
-                if (!G1.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Equals(v)).Key))) {
+                if (!G1.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Equals(v)).Key))) { //guaranteed to exist since bijection check passed
                     return false;
                 }
             }
@@ -61,7 +61,24 @@ namespace GraphRewriteEngine
 
         public override bool Cut(Mapping m, Node[] p)
         {
-            throw new NotImplementedException();
+            //D and R
+            ICollection<Node> D = m.M.Keys;
+            ICollection<Node> R = m.M.Values;
+
+            //The Ts
+            IEnumerable<Node> uV1 = pattern.Vertices.Except(D);
+            IEnumerable<Node> uV2 = host.Vertices.Except(R);
+            IEnumerable<Node> T1 = uV1.Where(node => ExistsUncoveredNeighbor(node, D, pattern));
+            IEnumerable<Node> T2 = uV1.Where(node => ExistsUncoveredNeighbor(node, R, host));
+
+            //The T hats
+            IEnumerable<Node> TH1 = uV1.Except(T1);
+            IEnumerable<Node> TH2 = uV2.Except(T2);
+
+            bool A = host.AdjacentVertices(p[1]).Intersect(T2).Count() < pattern.AdjacentVertices(p[0]).Intersect(T1).Count();
+            bool B = host.AdjacentVertices(p[1]).Intersect(TH2).Count() < pattern.AdjacentVertices(p[0]).Intersect(TH1).Count();
+
+            return A || B;
         }
 
         public override Node[] Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
