@@ -59,7 +59,7 @@ namespace GraphRewriteEngine {
             IEnumerable<Node> uV2 = host.Vertices.Except(m.M.Values);
 
             IEnumerable<Node> T1 = uV1.Where(node => ExistsUncoveredNeighbor(node, m.M.Keys, pattern));
-            IEnumerable<Node> T2 = uV1.Where(node => ExistsUncoveredNeighbor(node, m.M.Values, host));
+            IEnumerable<Node> T2 = uV2.Where(node => ExistsUncoveredNeighbor(node, m.M.Values, host));
             //Use IEnumerable.Any to check if empty
             if (T1.Any() && T2.Any()) {
                 return CartesianProduct(T1, T2);
