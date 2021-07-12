@@ -81,14 +81,17 @@ namespace GraphRewriteEngine
             return A || B;
         }
 
-        public override Node[] Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override Mapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
             throw new NotImplementedException();
         }
 
-        public override IList<Node[]> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override IList<Mapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
-            throw new NotImplementedException();
+            this.pattern = pattern;
+            this.host = host;
+            VF2(new Mapping());
+            return this.mappings;
         }
 
         public override bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
