@@ -28,14 +28,12 @@ namespace GraphRewriteEngine
             //Cons(m)
             foreach (Node u in D) {
                 if (!u.IsEquivalent(m.M[u])) { //1st check
-                    Console.WriteLine($"{m} not consistent 1");
                     return false;
                 }
                 foreach (Node v in D) { //2rd check
                     bool A = E1.Contains(new LEdge(u, v)); //Assuming the Equals works
                     bool B = E2.Contains(new LEdge(m.M[u], m.M[v]));
                     if ((A && !B) || (!A && B)) {
-                        Console.WriteLine($"{m} not consistent 2");
                         return false;
                     }
                 }
@@ -43,7 +41,6 @@ namespace GraphRewriteEngine
 
             foreach (Node u in pattern.AdjacentVertices(p[0]).Intersect(D)) { //Not every mapping fails here
                 if (!host.Edges.Contains(new LEdge(p[1], m.M[u]))) {
-                    Console.WriteLine($"{m} not consistent 4");
                     return false; 
                 }
             }
@@ -51,12 +48,10 @@ namespace GraphRewriteEngine
             //For the following checks, we use the global graphs (global vertex/edge sets, as delineated in the paper)
             foreach (Node v in host.AdjacentVertices(p[1]).Intersect(R)) { 
                 if (!pattern.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Value.Equals(v)).Key))) { //OH RIGHT, FirstOrDefault is checking PAIRS
-                    Console.WriteLine($"{m} not consistent 3");
                     return false; 
                 }
             }
 
-            Console.WriteLine($"{m} consistent");
             return true;
         }
 
