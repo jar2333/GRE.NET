@@ -7,44 +7,33 @@ namespace GraphRewriteEngine
 {
     public class Mapping {
 
-            public Node[] M;
-            
-            public HashSet<Node> D;
-
-            public HashSet<Node> R;
+            public Dictionary<Node, Node> M;
 
             //Empty starting mapping
-            public Mapping(int V1Size) {
-                M = new Node[V1Size];
-                D = new HashSet<Node>(); 
-                R = new HashSet<Node>();
-
+            public Mapping() {
+                M = new Dictionary<Node, Node>();
             }
 
             //For extended mappings
-            public Mapping(int V1Size, HashSet<Node> d, HashSet<Node> r) {
-                M = new Node[V1Size];
-                D = new HashSet<Node>(d); 
-                R = new HashSet<Node>(r);
-
+            public Mapping(Dictionary<Node, Node> m) {
+                M = new Dictionary<Node, Node>(m);
             }
 
             //The matching order index is embedded in the node's index attribute
             //creates copy of mapping to return (not altering the original)
             public Mapping Extend(Node u, Node v) {
-                Mapping extended = new Mapping(M.Length, this.D, this.R);
-                extended.M[u.Index] = v;
-                extended.D.Add(u);
-                extended.R.Add(v);
+                Mapping extended = new Mapping(this.M);
+                extended.M[u] = v;
                 return extended;
             }
 
+            //This could be way better, but suffices for now
             public bool Covers(IEnumerable<Node> V) {
-                return D.IsSupersetOf(V) || R.IsSupersetOf(V);
+                return V.Where(v => Covers(v)).Count() == V.Count();
             }
 
             public bool Covers(Node v) {
-                return D.Contains(v) || R.Contains(v);
+                return M.Keys.Contains(v) || M.Values.Contains(v);
             }
 
     }

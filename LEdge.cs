@@ -17,6 +17,22 @@ namespace GraphRewriteEngine
             this.Label = label;
         }
 
+        public override int GetHashCode()
+        {
+            return (this.Source.Index, this.Source.Index).GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as LEdge);
+        }
+
+        public override string ToString()
+        {
+            return $"e({this.Source.ToString()}, {this.Target.ToString()}):L.{this.Label}";
+        }
+
+        //Should this be two-sided?
         public bool Equals (LEdge e) {
             if (e == null) {
                 return false;

@@ -8,24 +8,30 @@ namespace GraphRewriteEngine
         
         public int Index {get; set;}
         public string Label {get; set;}
-        public Dictionary<string, string> attributes;
 
         public Node(int index, string label) {
-            attributes = new Dictionary<string, string>();
             this.Index = index;
             this.Label = label;
         }
 
-        public void AddAttribute(string key, string value) {
-            attributes[key] = value;
+        //overriding for hashing purposes
+        public override int GetHashCode()
+        {
+            return this.Index;
         }
 
-        public string GetAttribute(string key) {
-            string att = "null";
-            attributes.TryGetValue(key, out att);
-            return att;
+        public override bool Equals(object obj) {
+            return Equals(obj as Node);
+
         }
 
+        //defining for convinience
+        public override string ToString()
+        {
+            return $"v{this.Index}:L.{this.Label}";
+        }
+
+        //to define overwritten
         public bool Equals(Node n) {
             if (n == null) {
                 return false;
@@ -33,6 +39,7 @@ namespace GraphRewriteEngine
             return this.Index.Equals(n.Index);
         }
 
+        //label equivalence is not node equality
         public bool IsEquivalent(Node n) {
             return this.Label.Equals(n.Label);
         }

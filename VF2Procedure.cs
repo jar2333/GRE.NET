@@ -29,7 +29,7 @@ namespace GraphRewriteEngine {
         }
 
         //purely helper method (perhaps optimize with Linq)
-        public bool ExistsUncoveredNeighbor(Node v, HashSet<Node> V, UndirectedGraph<Node, LEdge> G) {
+        public bool ExistsUncoveredNeighbor(Node v, IEnumerable<Node> V, UndirectedGraph<Node, LEdge> G) {
             IEnumerable<Node> neighbors = G.AdjacentVertices(v);
             foreach (var node in V) {
                 if (neighbors.Contains(node)) {
@@ -45,11 +45,11 @@ namespace GraphRewriteEngine {
 
         //Yeah, make a mapping class, with IEnumerables for D(m) and R(m)
         public IEnumerable<Node[]> Candidates(Mapping m) {
-            IEnumerable<Node> uV1 = pattern.Vertices.Except<Node>(m.D);
-            IEnumerable<Node> uV2 = host.Vertices.Except<Node>(m.R);
+            IEnumerable<Node> uV1 = pattern.Vertices.Except<Node>(m.M.Keys);
+            IEnumerable<Node> uV2 = host.Vertices.Except<Node>(m.M.Values);
 
-            IEnumerable<Node> T1 = uV1.Where(node => ExistsUncoveredNeighbor(node, m.D, pattern));
-            IEnumerable<Node> T2 = uV1.Where(node => ExistsUncoveredNeighbor(node, m.R, host));
+            IEnumerable<Node> T1 = uV1.Where(node => ExistsUncoveredNeighbor(node, m.M.Keys, pattern));
+            IEnumerable<Node> T2 = uV1.Where(node => ExistsUncoveredNeighbor(node, m.M.Values, host));
             //Use IEnumerable.Any to check if empty
             if (T1.Any<Node>() && T2.Any<Node>()) {
                 return CartesianProduct(T1, T2);
