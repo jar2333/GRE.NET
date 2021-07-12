@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "sR64tN5OowPPKeudUWtUwDcwn0rRJMoj8FMCgzhwni5To1yiG6mgle9yQUv/H5V3p9X0wCXAW/gfA/pu6IxovQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Jose A. Ramos\\csharp-workspace\\GraphRewriteEngine\\GraphRewriteEngine.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Jose A. Ramos\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Jose A. Ramos\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\Jose A. Ramos\\.nuget\\packages\\quikgraph\\2.3.0\\quikgraph.2.3.0.nupkg.sha512"
+  ],
+  "logs": []
+}
