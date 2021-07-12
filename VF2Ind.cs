@@ -10,27 +10,53 @@ namespace GraphRewriteEngine
         public VF2Ind() : base() {}
 
         //Cons(m) iff m satisfies reqs of PT by considering
-        //G(D(m)) ⊆ G1 and G(R(m)) ⊆ G2 (induced subgraphs)
+        //G(D(m)) ⊆ pattern and G(R(m)) ⊆ host (induced subgraphs)
         public override bool Cons(Mapping m, Node[] p)
         {
-            ICollection<Node> D = m.M.Keys;
-            ICollection<Node> R = m.M.Values;
-            //The induced subgraphs
-            var G1 = GraphExtensions.ToUndirectedGraph<Node, LEdge>(pattern.Edges.Where(e => D.Contains(e.Source) || D.Contains(e.Target)));
-            var G2 = GraphExtensions.ToUndirectedGraph<Node, LEdge>(host.Edges.Where(e => R.Contains(e.Source) || R.Contains(e.Target)));
+            //L(u) == L(v) [quick discard if unequal]
+            if (!p[0].IsEquivalent(p[1])) {
+                return false;
+            }
 
-            //iterate each node
-            foreach (Node u in G1.Vertices) {
-                if (!u.IsEquivalent(m.M[u])) {
+            //G(D(m))
+            ICollection<Node> D = m.M.Keys;
+            IEnumerable<LEdge> E1 = pattern.Edges.Where(e => D.Contains(e.Source) && D.Contains(e.Target));
+            //G(R(m))
+            ICollection<Node> R = m.M.Values;
+            IEnumerable<LEdge> E2 = host.Edges.Where(e => R.Contains(e.Source) && R.Contains(e.Target));
+
+            //Cons(m)
+            foreach (Node u in D) {
+                if (!u.IsEquivalent(m.M[u])) { //1st check
+                    return false;
+                }
+                foreach (Node v in D) { //2rd check
+                    bool A = E1.Contains(new LEdge(u, v)); //Assuming the Equals works
+                    bool B = E2.Contains(new LEdge(m.M[u], m.M[v]));
+                    if ((A && !B) || (!A && B)) {
+                        return false;
+                    }
+                }
+            }
+
+            //The induced subgraphs (needed for neighbor operations)
+            //Would it be better to have these near the beginning and not save D, R, E1, E2?
+            var G1 = GraphExtensions.ToUndirectedGraph<Node, LEdge>(E1);
+            var G2 = GraphExtensions.ToUndirectedGraph<Node, LEdge>(E2);
+
+            foreach (Node v in G2.AdjacentVertices(p[1]).Intersect(R)) {
+                if (!G1.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Equals(v)).Key))) {
                     return false;
                 }
             }
 
-            //iterate each edge but get them through the vertex
+            foreach (Node u in G1.AdjacentVertices(p[0]).Intersect(D)) {
+                if (!G2.Edges.Contains(new LEdge(p[1], m.M[u]))) {
+                    return false;
+                }
+            }
 
-            //Calculate the rest of the other properties
-            bool equivalent = p[0].IsEquivalent(p[1]);
-            throw new NotImplementedException();
+            return true;
         }
 
         public override bool Cut(Mapping m, Node[] p)
