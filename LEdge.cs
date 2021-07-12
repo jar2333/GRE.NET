@@ -14,6 +14,7 @@ namespace GraphRewriteEngine
         public LEdge(Node a, Node b) {
             this.Source = a;
             this.Source = b; 
+            this.Tag = "";
         }
 
         public LEdge(Node a, Node b, string tag) {

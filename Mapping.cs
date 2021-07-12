@@ -36,5 +36,13 @@ namespace GraphRewriteEngine
                 return M.Keys.Contains(v) || M.Values.Contains(v);
             }
 
+            public override string ToString() {
+                string output = "";
+                foreach (KeyValuePair<Node, Node> entry in M) {
+                    output += $"{entry.Key.ToString()} -> {entry.Value.ToString()}\n";
+                }
+                return output;
+            }
+
     }
 }

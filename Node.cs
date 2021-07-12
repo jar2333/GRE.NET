@@ -9,6 +9,11 @@ namespace GraphRewriteEngine
         public int Index {get; set;}
         public string Tag {get; set;}
 
+        public Node(int index) {
+            this.Index = index;
+            this.Tag = "";
+        }
+
         public Node(int index, string tag) {
             this.Index = index;
             this.Tag = tag;
