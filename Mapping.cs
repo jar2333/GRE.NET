@@ -32,8 +32,8 @@ namespace GraphRewriteEngine
                 return V.Where(v => Covers(v)).Count() == V.Count();
             }
 
-            public bool Covers(Node v) {
-                return M.Keys.Contains(v) || M.Values.Contains(v);
+            public bool Covers(Node v) { //Despite the paper including both D and R, that causes issues
+                return M.Keys.Contains(v);
             }
 
             public override string ToString() {
