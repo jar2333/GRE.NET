@@ -4,7 +4,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine 
 {
-    public interface Mapper {
+    public interface IMapper {
 
         Mapping Find(UndirectedGraph<Node, LEdge> G1, UndirectedGraph<Node, LEdge> G2);
 
