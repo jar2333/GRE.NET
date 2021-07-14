@@ -7,7 +7,7 @@ namespace GraphRewriteEngine {
 
     public class EdgeMapper: IMapper { //Class for when patten is a K2 graph
 
-        public List<Mapping> mappings;
+        public List<Mapping> mappings; //should this be a thing? Should mappers just compute and not store?
 
         public EdgeMapper() {
             this.mappings = new List<Mapping>();
