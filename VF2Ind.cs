@@ -83,14 +83,17 @@ namespace GraphRewriteEngine
 
         public override Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
-            throw new NotImplementedException();
+            this.pattern = pattern;
+            this.host = host;
+            VF2(true);
+            return morphisms.FirstOrDefault();
         }
 
         public override IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
             this.pattern = pattern;
             this.host = host;
-            VF2(new NodeMapping());
+            VF2(false);
             return morphisms;
         }
 
