@@ -10,17 +10,23 @@ namespace GraphRewriteEngine {
         public UndirectedGraph<Node, LEdge> pattern;
         public UndirectedGraph<Node, LEdge> host;
 
-        public List<NodeMapping> mappings;
+        public List<Morphism> morphisms;
 
         //Constructor
         public VF2Procedure() {
-            this.mappings = new List<NodeMapping>();
+            this.morphisms = new List<Morphism>();
         }
 
         //Main procedure, avoid the recursion (fix later)
         public void VF2(NodeMapping m) {
             if (m.Covers(pattern.Vertices)) {
-                this.mappings.Add(m);
+                ICollection<Node> D = m.M.Keys;
+                IEnumerable<LEdge> E1 = pattern.Edges.Where(e => D.Contains(e.Source) && D.Contains(e.Target));
+                var edgeMap = new Dictionary<LEdge, LEdge>(); 
+                foreach (var e in E1) {
+                    edgeMap[e] = new LEdge(m.M[e.Source], m.M[e.Target]);
+                }
+                this.morphisms.Add(new Morphism(m, new EdgeMapping(edgeMap)));
             }
             else {
                 IEnumerable<Node[]> candidatePairs = Candidates(m);

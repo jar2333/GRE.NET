@@ -91,11 +91,6 @@ namespace GraphRewriteEngine
             this.pattern = pattern;
             this.host = host;
             VF2(new NodeMapping());
-
-            var morphisms = new List<Morphism>();
-            foreach (var m in this.mappings) {
-                morphisms.Add(new Morphism(m, new EdgeMapping()));
-            }
             return morphisms;
         }
 
