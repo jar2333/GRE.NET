@@ -81,17 +81,22 @@ namespace GraphRewriteEngine
             return A || B;
         }
 
-        public override NodeMapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
             throw new NotImplementedException();
         }
 
-        public override IList<NodeMapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
             this.pattern = pattern;
             this.host = host;
             VF2(new NodeMapping());
-            return this.mappings;
+
+            var morphisms = new List<Morphism>();
+            foreach (var m in this.mappings) {
+                morphisms.Add(new Morphism(m, new EdgeMapping()));
+            }
+            return morphisms;
         }
 
         public override bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)

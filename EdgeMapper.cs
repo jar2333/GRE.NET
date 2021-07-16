@@ -5,7 +5,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine {
 
-    public class EdgeMapper: IMapper<NodeMapping> { //Class for when patten is a K2 graph
+    public class EdgeMapper: IMapper { //Class for when patten is a K2 graph
 
         public List<NodeMapping> mappings; //should this be a thing? Should mappers just compute and not store?
 
@@ -29,19 +29,22 @@ namespace GraphRewriteEngine {
             }
         }
 
-        public NodeMapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
-            EdgeSearch(pattern, host, false);
-            return mappings.FirstOrDefault();
+        public Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
+            //EdgeSearch(pattern, host, false);
+            //return mappings.FirstOrDefault();
+            throw new NotImplementedException();
         }
 
-        public IList<NodeMapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
-            EdgeSearch(pattern, host, true);
-            return mappings;
+        public IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
+            //EdgeSearch(pattern, host, true);
+            //return mappings;
+            throw new NotImplementedException();
         }
 
         public bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
-            EdgeSearch(pattern, host, false);
-            return mappings.Count > 0;
+            //EdgeSearch(pattern, host, false);
+            //return mappings.Count > 0;
+            throw new NotImplementedException();
         }
 
 

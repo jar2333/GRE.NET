@@ -5,7 +5,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine {
 
-    public abstract class VF2Procedure: IMapper<NodeMapping> {
+    public abstract class VF2Procedure: IMapper {
 
         public UndirectedGraph<Node, LEdge> pattern;
         public UndirectedGraph<Node, LEdge> host;
@@ -75,9 +75,9 @@ namespace GraphRewriteEngine {
 
 
         //Interface methods
-        public abstract NodeMapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
+        public abstract Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 
-        public abstract IList<NodeMapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
+        public abstract IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 
         public abstract bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 
