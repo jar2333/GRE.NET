@@ -20,6 +20,7 @@ namespace GraphRewriteEngine {
         //Main procedure, avoid the recursion (fix later)
         public void VF2(NodeMapping m) {
             if (m.Covers(pattern.Vertices)) {
+                //Getting the edge mapping from a given valid Ind node mapping is straightforward
                 ICollection<Node> D = m.M.Keys;
                 IEnumerable<LEdge> E1 = pattern.Edges.Where(e => D.Contains(e.Source) && D.Contains(e.Target));
                 var edgeMap = new Dictionary<LEdge, LEdge>(); 
