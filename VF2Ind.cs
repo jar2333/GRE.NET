@@ -98,7 +98,10 @@ namespace GraphRewriteEngine
 
         public override bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
-            throw new NotImplementedException();
+            this.pattern = pattern;
+            this.host = host;
+            VF2(true);
+            return morphisms.Count > 0;
         }
 
     }
