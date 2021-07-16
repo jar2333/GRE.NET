@@ -55,7 +55,6 @@ namespace GraphRewriteEngine
                 }
             }
 
-            Console.WriteLine("consistent");
             return true;
         }
 
