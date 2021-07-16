@@ -5,21 +5,33 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class LEdge : IEdge<Node>, IEquatable<LEdge>, ITagged<string> {
+    public class LEdge : IEdge<Node>, IEquatable<LEdge>, ITagged<string> { //add IComparable
 
         public string Tag { get; set; }
         public Node Source { get; set; }
         public Node Target { get; set; }
 
-        public LEdge(Node a, Node b) {
-            this.Source = a;
-            this.Target = b; 
+        public LEdge(Node a, Node b) { //check if this ordering makes this edge "unordered"
+            if (a.Index < b.Index) {
+                this.Source = a;
+                this.Target = b; 
+            }
+            else {
+                this.Source = b; 
+                this.Target = a; 
+            }
             this.Tag = "";
         }
 
         public LEdge(Node a, Node b, string tag) {
-            this.Source = a;
-            this.Target = b;
+            if (a.Index < b.Index) {
+                this.Source = a;
+                this.Target = b; 
+            }
+            else {
+                this.Source = b; 
+                this.Target = a; 
+            }
             this.Tag = tag;
         }
 
@@ -38,12 +50,13 @@ namespace GraphRewriteEngine
             return $"e({this.Source.ToString()}, {this.Target.ToString()}):L.{this.Tag}";
         }
 
-        //Should this be two-sided?
+        //Should this be one-sided? Does this two-sided implementation mess things up?
         public bool Equals (LEdge e) {
             if (e == null) {
                 return false;
             }
             return this.Source.Equals(e.Source) && this.Target.Equals(e.Target);
+                    //|| this.Source.Equals(e.Target) && this.Target.Equals(e.Source);
         }
 
         public bool IsEquivalent(LEdge e) {
