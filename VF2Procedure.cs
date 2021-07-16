@@ -40,11 +40,12 @@ namespace GraphRewriteEngine {
         }
 
         
-        public void VF2(bool find) {
+        public void VF2(int iter) {
             Stack<NodeMapping> mapStack = new Stack<NodeMapping>();
             mapStack.Push(new NodeMapping());
+            int i = 0; //the number of added morphisms
             NodeMapping m;
-            while (mapStack.Count > 0) {
+            while (mapStack.Count > 0 && (iter == 0 ? true : iter > i)) {
                 m = mapStack.Pop();
                 if (m.Covers(pattern.Vertices)) {
                     //Getting the edge mapping from a given valid Ind node mapping is straightforward
@@ -55,9 +56,7 @@ namespace GraphRewriteEngine {
                         edgeMap[e] = new LEdge(m.M[e.Source], m.M[e.Target]);
                     }
                     this.morphisms.Add(new Morphism(m, new EdgeMapping(edgeMap)));
-                    if (find) {
-                        return;
-                    }
+                    i++;
                 }
                 else {
                     IEnumerable<Node[]> candidatePairs = Candidates(m);
@@ -116,7 +115,7 @@ namespace GraphRewriteEngine {
         //Interface methods
         public abstract Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 
-        public abstract IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
+        public abstract IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host, int iter = 0);
 
         public abstract bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 

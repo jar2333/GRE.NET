@@ -35,7 +35,7 @@ namespace GraphRewriteEngine {
             throw new NotImplementedException();
         }
 
-        public IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
+        public IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host, int iter = 0) {
             //EdgeSearch(pattern, host, true);
             //return mappings;
             throw new NotImplementedException();

@@ -84,15 +84,15 @@ namespace GraphRewriteEngine
         {
             this.pattern = pattern;
             this.host = host;
-            VF2(true);
+            VF2(1);
             return morphisms.FirstOrDefault();
         }
 
-        public override IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host, int iter = 0)
         {
             this.pattern = pattern;
             this.host = host;
-            VF2(false);
+            VF2(iter);
             return morphisms;
         }
 
@@ -100,7 +100,7 @@ namespace GraphRewriteEngine
         {
             this.pattern = pattern;
             this.host = host;
-            VF2(true);
+            VF2(1);
             return morphisms.Count > 0;
         }
 
