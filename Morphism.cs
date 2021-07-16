@@ -23,5 +23,9 @@ namespace GraphRewriteEngine
             return new Morphism(this.Vm.Compose(f.Vm) as NodeMapping, this.Em.Compose(f.Em) as EdgeMapping);
         } 
 
+        public override string ToString() {
+            return $"Node mapping:\n{Vm.ToString()}Edge mapping:\n{Em.ToString()}";
+        }
+
     }
 }
