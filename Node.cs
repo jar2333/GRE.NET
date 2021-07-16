@@ -4,7 +4,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class Node : ITagged<string> {
+    public class Node : IEquatable<Node>, IComparable<Node>, ITagged<string> { //Add IComparable
         
         public int Index {get; set;}
         public string Tag {get; set;}
@@ -26,14 +26,24 @@ namespace GraphRewriteEngine
         }
 
         public override bool Equals(object obj) {
+            if (obj is int) {
+                return Equals(obj);
+            }
             return Equals(obj as Node);
 
+        }
+
+        public int CompareTo(Node n) {
+            if (n == null) {
+                return 1;
+            }
+            return this.Index.CompareTo(n.Index);
         }
 
         //defining for convinience
         public override string ToString()
         {
-            return $"v{this.Index}:L.{this.Tag}";
+            return $"v{this.Index}.L:{this.Tag}";
         }
 
         //to define overwritten
@@ -42,6 +52,11 @@ namespace GraphRewriteEngine
                 return false;
             }
             return this.Index.Equals(n.Index);
+        }
+
+        //for indexing!
+        public bool Equals(int i) { 
+            return this.Index.Equals(i);
         }
 
         //label equivalence is not node equality
