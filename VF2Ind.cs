@@ -40,18 +40,22 @@ namespace GraphRewriteEngine
             }
 
             foreach (Node u in pattern.AdjacentVertices(p[0]).Intersect(D)) { //Not every mapping fails here
-                if (!host.Edges.Contains(new LEdge(p[1], m.M[u]))) {
+                if (!host.Edges.Contains(new LEdge(m.M[u], p[1]))) {
+                    //Console.WriteLine($"{e.ToString()} not contained?");
+                    //host.Edges.All(x => {Console.Write($"{x.ToString()}, "); return true;});
+                    //Console.WriteLine("inconsistent 4");
                     return false; 
                 }
             }
             //the induced subgraphs are only useful for Cons(m)
             //For the following checks, we use the global graphs (global vertex/edge sets, as delineated in the paper)
             foreach (Node v in host.AdjacentVertices(p[1]).Intersect(R)) { 
-                if (!pattern.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Value.Equals(v)).Key))) { //OH RIGHT, FirstOrDefault is checking PAIRS
+                if (!pattern.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Value.Equals(v)).Key))) {
                     return false; 
                 }
             }
 
+            Console.WriteLine("consistent");
             return true;
         }
 
