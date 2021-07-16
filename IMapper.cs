@@ -4,11 +4,11 @@ using QuikGraph;
 
 namespace GraphRewriteEngine 
 {
-    public interface IMapper {
+    public interface IMapper<T> {
 
-        Mapping Find(UndirectedGraph<Node, LEdge> G1, UndirectedGraph<Node, LEdge> G2);
+        NodeMapping Find(UndirectedGraph<Node, LEdge> G1, UndirectedGraph<Node, LEdge> G2);
 
-        IList<Mapping> Enumerate(UndirectedGraph<Node, LEdge> G1, UndirectedGraph<Node, LEdge> G2);
+        IList<NodeMapping> Enumerate(UndirectedGraph<Node, LEdge> G1, UndirectedGraph<Node, LEdge> G2);
 
         bool Exists(UndirectedGraph<Node, LEdge> G1, UndirectedGraph<Node, LEdge> G2);
 

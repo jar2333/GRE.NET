@@ -5,20 +5,20 @@ using QuikGraph;
 
 namespace GraphRewriteEngine {
 
-    public abstract class VF2Procedure: IMapper {
+    public abstract class VF2Procedure: IMapper<NodeMapping> {
 
         public UndirectedGraph<Node, LEdge> pattern;
         public UndirectedGraph<Node, LEdge> host;
 
-        public List<Mapping> mappings;
+        public List<NodeMapping> mappings;
 
         //Constructor
         public VF2Procedure() {
-            this.mappings = new List<Mapping>();
+            this.mappings = new List<NodeMapping>();
         }
 
         //Main procedure, avoid the recursion (fix later)
-        public void VF2(Mapping m) {
+        public void VF2(NodeMapping m) {
             if (m.Covers(pattern.Vertices)) {
                 this.mappings.Add(m);
             }
@@ -54,7 +54,7 @@ namespace GraphRewriteEngine {
         }
 
         //Yeah, make a mapping class, with IEnumerables for D(m) and R(m)
-        public IEnumerable<Node[]> Candidates(Mapping m) {
+        public IEnumerable<Node[]> Candidates(NodeMapping m) {
             IEnumerable<Node> uV1 = pattern.Vertices.Except(m.M.Keys);
             IEnumerable<Node> uV2 = host.Vertices.Except(m.M.Values);
 
@@ -69,15 +69,15 @@ namespace GraphRewriteEngine {
         }
 
         //problem specific functions
-        public abstract bool Cons(Mapping m, Node[] p);
+        public abstract bool Cons(NodeMapping m, Node[] p);
 
-        public abstract bool Cut(Mapping m, Node[] p);
+        public abstract bool Cut(NodeMapping m, Node[] p);
 
 
         //Interface methods
-        public abstract Mapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
+        public abstract NodeMapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 
-        public abstract IList<Mapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
+        public abstract IList<NodeMapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 
         public abstract bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
 

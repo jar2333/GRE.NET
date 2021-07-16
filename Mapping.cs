@@ -5,40 +5,45 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class Mapping {
+    public class Mapping<T> {
 
-            public Dictionary<Node, Node> M;
+            public Dictionary<T, T> M; //make private later
+
+            public IEnumerable<T> Keys() {
+                return M.Keys;
+            }
+
+            public IEnumerable<T> Values() {
+                return M.Values;
+            }
 
             //Empty starting mapping
             public Mapping() {
-                M = new Dictionary<Node, Node>();
+                M = new Dictionary<T, T>();
             }
 
-            //For extended mappings
-            public Mapping(Dictionary<Node, Node> m) {
-                M = new Dictionary<Node, Node>(m);
+            public Mapping(Dictionary<T, T> m) {
+                M = new Dictionary<T, T>(m);
             }
 
-            //The matching order index is embedded in the node's index attribute
-            //creates copy of mapping to return (not altering the original)
-            public Mapping Extend(Node u, Node v) {
-                Mapping extended = new Mapping(this.M);
-                extended.M[u] = v;
-                return extended;
+            public bool IsSubset(IEnumerable<T> A, IEnumerable<T> B) {
+                return !A.Except(B).Any();
             }
 
-            //This could be way better, but suffices for now
-            public bool Covers(IEnumerable<Node> V) {
-                return V.Where(v => Covers(v)).Count() == V.Count();
-            }
-
-            public bool Covers(Node v) { //Despite the paper including both D and R, that causes issues
-                return M.Keys.Contains(v);
+            public Mapping<T> Compose(Mapping<T> m) {
+                if (IsSubset(this.Values(), m.Keys())) {
+                    var composition = new Dictionary<T, T>();
+                    foreach (T key in this.Keys()) {
+                        composition[key] = m.M[this.M[key]];
+                    }
+                    return new Mapping<T>(composition);
+                }
+                throw new NotSupportedException();
             }
 
             public override string ToString() {
                 string output = "";
-                foreach (KeyValuePair<Node, Node> entry in M) {
+                foreach (KeyValuePair<T, T> entry in M) {
                     output += $"{entry.Key.ToString()} -> {entry.Value.ToString()}\n";
                 }
                 return output;

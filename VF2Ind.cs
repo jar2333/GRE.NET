@@ -11,7 +11,7 @@ namespace GraphRewriteEngine
 
         //Cons(m) iff m satisfies reqs of PT by considering
         //G(D(m)) ⊆ pattern and G(R(m)) ⊆ host (induced subgraphs)
-        public override bool Cons(Mapping m, Node[] p)
+        public override bool Cons(NodeMapping m, Node[] p)
         {
             //L(u) == L(v) [quick discard if unequal]
             if (!p[0].IsEquivalent(p[1])) {
@@ -59,7 +59,7 @@ namespace GraphRewriteEngine
             return true;
         }
 
-        public override bool Cut(Mapping m, Node[] p)
+        public override bool Cut(NodeMapping m, Node[] p)
         {
             //D and R
             ICollection<Node> D = m.M.Keys;
@@ -81,16 +81,16 @@ namespace GraphRewriteEngine
             return A || B;
         }
 
-        public override Mapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override NodeMapping Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
             throw new NotImplementedException();
         }
 
-        public override IList<Mapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override IList<NodeMapping> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
         {
             this.pattern = pattern;
             this.host = host;
-            VF2(new Mapping());
+            VF2(new NodeMapping());
             return this.mappings;
         }
 
