@@ -5,7 +5,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine {
 
-    public class EdgeMapper: IMapper { //Class for when patten is a K2 graph
+    public class EdgeMapper: IMapper { //Class for when pattern is a K2 graph
 
         public List<Morphism> morphisms; //should this be a thing? Should mappers just compute and not store?
 
