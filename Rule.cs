@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class Rule {
+    public class Rule { //This whole representation might be entirely unnecesary, we'll see!
         public UndirectedGraph<Node, LEdge> LHS;
         public UndirectedGraph<Node, LEdge> RHS;
         public UndirectedGraph<Node, LEdge> I;
@@ -20,8 +21,33 @@ namespace GraphRewriteEngine
             this.L = L;
             this.R = R;
 
-            
+            AddRuleTags();
         }
+
+        private void AddRuleTags() {
+            //Tag as obsolete
+            foreach (Node v in LHS.Vertices) {
+                if (!L.Vm.Values().Contains(v)) {
+                    v.Tag = "o";
+                }
+            }
+            foreach (LEdge e in LHS.Edges) {
+                if (!L.Em.Values().Contains(e)) {
+                    e.Tag = "o";
+                }
+            }
+            //Tag as fresh
+            foreach (Node v in RHS.Vertices) {
+                if (!L.Vm.Values().Contains(v)) {
+                    v.Tag = "f";
+                }
+            }
+            foreach (LEdge e in RHS.Edges) {
+                if (!L.Em.Values().Contains(e)) {
+                    e.Tag = "f";
+                }
+            }
+        } 
 
 
 
