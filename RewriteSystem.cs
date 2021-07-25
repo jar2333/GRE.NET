@@ -7,7 +7,7 @@ namespace GraphRewriteEngine
 {
     public class RewriteSystem{ //grammar, axiom, controlled derivation step by step or until termination condition
 
-        //A "Picker" class to choose the next applicable grammar rule to apply (can be stochastic!)
+        //A "Picker" interface for classes that choose the next applicable grammar rule to use (can be stochastic!)
 
         private Grammar grammar;
 
@@ -18,6 +18,10 @@ namespace GraphRewriteEngine
         public RewriteSystem(Grammar G, UndirectedGraph<Node, LEdge> a) {
             this.grammar = G;
             this.axiom = a;
+        }
+
+        public int Step() { //a derivation step, returns index of applied rule
+            throw new NotImplementedException();
         }
 
     }
