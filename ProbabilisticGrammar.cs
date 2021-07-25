@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using QuikGraph;
 
 namespace GraphRewriteEngine
@@ -8,6 +7,8 @@ namespace GraphRewriteEngine
     public class ProbabilisticGrammar : Grammar {
 
         public double[] weights;
+
+        //add a Random generator object, with seeding options. Check out MathNet.Numerics
 
         public ProbabilisticGrammar(List<Rule> r) : base(r) {
             this.weights = new double[this.rules.Length];
