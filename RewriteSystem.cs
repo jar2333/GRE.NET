@@ -125,17 +125,17 @@ namespace GraphRewriteEngine
                                 maxIndex++;
                                 newIndex = maxIndex;
                             }
-                            freshMapping.M[e.Source] = new Node(newIndex); //Ah, deal with labels!
+                            freshMapping.M[e.Source] = new Node(newIndex, e.Source.Tag); //Ah, deal with labels!
                         }
                         newSource = freshMapping.M[e.Source];
                     }
                     //check Target (consider making LEdge indexable...)
                     Node newTarget;
                     if(appliedRule.IsInterface(e.Target)) { //optimize this later (interface or not)
-                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Target.Tag)).Key; //optimize later! (reverse direction?)
-                        q = appliedRule.L.Vm.M[q];
+                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Target.Tag)).Key; //optimize later! 
+                        q = appliedRule.L.Vm.M[q];              //(reverse direction possible due to injectivity assumption)
                         q = appliedMatch.Vm.M[q];
-                        newTarget = q.Clone() as Node; //if ends with "|i", mapping already exists
+                        newTarget = q.Clone() as Node; //if IsInterface, mapping already exists
                     }
                     else {
                         if (!freshMapping.M.ContainsKey(e.Target)) {
@@ -147,7 +147,7 @@ namespace GraphRewriteEngine
                                 maxIndex++;
                                 newIndex = maxIndex;
                             }
-                            freshMapping.M[e.Target] = new Node(newIndex); //Ah, deal with labels!
+                            freshMapping.M[e.Target] = new Node(newIndex, e.Target.Tag); //Ah, deal with labels!
                         }
                         newTarget = freshMapping.M[e.Target];
                     }
@@ -172,7 +172,7 @@ namespace GraphRewriteEngine
                             maxIndex++;
                             newIndex = maxIndex;
                         }
-                        freshMapping.M[v] = new Node(newIndex); //Ah, deal with labels!
+                        freshMapping.M[v] = new Node(newIndex, v.Tag); //Ah, deal with labels!
                     }
                     newNode = freshMapping.M[v];
 

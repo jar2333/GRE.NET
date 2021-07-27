@@ -60,7 +60,7 @@ namespace GraphRewriteEngine
         }
 
         public object Clone() {
-            return new LEdge(this.Source.Clone() as Node, this.Target.Clone() as Node);
+            return new LEdge(this.Source.Clone() as Node, this.Target.Clone() as Node, this.Tag);
         }
 
         public bool IsEquivalent(LEdge e) {
