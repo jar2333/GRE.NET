@@ -63,11 +63,11 @@ namespace GraphRewriteEngine
             }
             
             int index;
-            if (ruleIndex < 0) { //using Chooser, pick a rule. Default
-                index = chooser.Choose(applicableRules); //this is so ugly but whatever
+            if (!applicableRules.Any() || ruleIndex >= grammar.Size || !applicableRules.ContainsKey(ruleIndex) || !applicableMatches.ContainsKey(ruleIndex)) {
+                return -1; //step failed (no applicable rules, or invalid ruleIndex)
             }
-            else if (ruleIndex >= grammar.Size || !applicableRules.ContainsKey(ruleIndex) || !applicableMatches.ContainsKey(ruleIndex)) {
-                return -1; //invalid ruleIndex
+            else if (ruleIndex < 0) { //using Chooser, pick a rule. Default
+                index = chooser.Choose(applicableRules); //this is so ugly but whatever
             }
             else {
                 index = ruleIndex; //valid ruleIndex
