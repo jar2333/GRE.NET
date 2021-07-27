@@ -104,7 +104,7 @@ namespace GraphRewriteEngine
             NodeMapping freshMapping = new NodeMapping(); //Make a node mapping
             foreach(LEdge e in appliedRule.RHS.Edges) {
                 if (appliedRule.IsInterface(e)) {
-                    this.generated.AddEdge(e.Clone() as LEdge); //if an edge is interface, so must its nodes be. (interface graph cannot have dangling edges)
+                    this.generated.AddVerticesAndEdge(e.Clone() as LEdge); //if an edge is interface, so must its nodes be. (interface graph cannot have dangling edges)
                 }
                 else { //optimize this later (interface or not)
                     //check Source
@@ -155,7 +155,7 @@ namespace GraphRewriteEngine
                     //add edge constructed from new (Source, Target)
                     LEdge newEdge = new LEdge(newSource, newTarget, e.Tag); //add label
                     if (this.generated.ContainsEdge(newEdge)) {  //contains check unnecessary?
-                        this.generated.AddEdge(newEdge); 
+                        this.generated.AddVerticesAndEdge(newEdge); 
                     }
                 }
             }
