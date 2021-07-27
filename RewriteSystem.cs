@@ -39,7 +39,7 @@ namespace GraphRewriteEngine
         public bool IsApplicable(Rule r, Morphism match) { //DPO conditions for existence of context
             //Condition 1
             foreach (Node v in r.LHS.Vertices) {
-                IEnumerable<LEdge> adjacent = this.generated.AdjacentEdges(v);
+                IEnumerable<LEdge> adjacent = this.generated.AdjacentEdges(match.Vm.M[v]);
                 adjacent = adjacent.Where(e => !match.Em.Values().Contains(e));
                 if (adjacent.Any() && !r.IsInterface(v)) { //should be impossible if applicable
                     return false;
