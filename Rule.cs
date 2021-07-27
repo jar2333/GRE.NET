@@ -38,6 +38,10 @@ namespace GraphRewriteEngine
             return interfaceEdges[e];
         }
 
+        public string Debug() {
+            return $"IEs: {interfaceEdges.Where(x => x.Value).Count()}, IVs: {interfaceNodes.Where(x => x.Value).Count()}";
+        }
+
         private void CacheInterface() {
             //Tag as obsolete
             foreach (Node v in LHS.Vertices) {
@@ -58,7 +62,7 @@ namespace GraphRewriteEngine
             }
             //Tag as fresh
             foreach (Node v in RHS.Vertices) {
-                if (L.Vm.Values().Contains(v)) {
+                if (R.Vm.Values().Contains(v)) {
                     interfaceNodes[v] = true;
                 }
                 else {
@@ -66,7 +70,7 @@ namespace GraphRewriteEngine
                 }
             }
             foreach (LEdge e in RHS.Edges) {
-                if (!L.Em.Values().Contains(e)) {
+                if (R.Em.Values().Contains(e)) {
                     interfaceEdges[e] = true;
                 }
                 else {

@@ -62,9 +62,16 @@ namespace GraphRewriteEngine
                 }
             }
             
+            //cases:
             int index;
-            if (!applicableRules.Any() || ruleIndex >= grammar.Size || !applicableRules.ContainsKey(ruleIndex) || !applicableMatches.ContainsKey(ruleIndex)) {
-                return -1; //step failed (no applicable rules, or invalid ruleIndex)
+            if (!applicableRules.Any()) {
+                return -3; //no applicable rules
+            } 
+            else if (!applicableMatches.Any()) {
+                return -2; //no matches
+            }
+            else if (ruleIndex >= grammar.Size || (ruleIndex > 0 && (!applicableRules.ContainsKey(ruleIndex) || !applicableMatches.ContainsKey(ruleIndex)))) {
+                return -1; //invalid ruleIndex
             }
             else if (ruleIndex < 0) { //using Chooser, pick a rule. Default
                 index = chooser.Choose(applicableRules); //this is so ugly but whatever
@@ -75,18 +82,23 @@ namespace GraphRewriteEngine
             Rule appliedRule = applicableRules[index];
             Morphism appliedMatch = applicableMatches[index];
 
+            //Console.WriteLine(appliedRule.Debug());
+            //Console.WriteLine($"applied match {appliedMatch}");
+
             //Actually rewrite the graph (kinda hacky, excuse my implementation)
             //Remove m(e), m(v) for each obsolete e, v. Store indeces in stack!
             int maxIndex = this.generated.VertexCount - 1; //indexing [0, ..., |V| - 1]
             var removedIndeces = new Stack<int>();
             foreach (LEdge e in appliedRule.LHS.Edges) {
                 if (!appliedRule.IsInterface(e)) {
+                    //Console.WriteLine($"Removed {appliedMatch.Em.M[e]}");
                     generated.RemoveEdge(appliedMatch.Em.M[e]);
                 }
             }
             foreach (Node v in appliedRule.LHS.Vertices) {
                 if (!appliedRule.IsInterface(v)) {
                     removedIndeces.Push(v.Index);
+                    //Console.WriteLine($"Removed {appliedMatch.Vm.M[v]}");
                     generated.RemoveVertex(appliedMatch.Vm.M[v]);
                 }
             }
@@ -103,19 +115,29 @@ namespace GraphRewriteEngine
                 //if not already added to fresh morphism, add to it and then host
             NodeMapping freshMapping = new NodeMapping(); //Make a node mapping
             foreach(LEdge e in appliedRule.RHS.Edges) {
-                if (appliedRule.IsInterface(e)) {
-                    this.generated.AddVerticesAndEdge(e.Clone() as LEdge); //if an edge is interface, so must its nodes be. (interface graph cannot have dangling edges)
+                if (appliedRule.IsInterface(e)) { //if an edge is interface, so must its nodes be. (interface graph cannot have dangling edges)
+                    Node s = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Source)).Key;
+                    s = appliedRule.L.Vm.M[s];
+                    s = appliedMatch.Vm.M[s]; //should find a way to seal this in a method
+
+                    Node t = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Target)).Key;
+                    t = appliedRule.L.Vm.M[t];
+                    t = appliedMatch.Vm.M[t];
+
+                    this.generated.AddEdge(new LEdge(s, t)); 
                 }
                 else { //optimize this later (interface or not)
                     //check Source
                     Node newSource;
                     if(appliedRule.IsInterface(e.Source)) { //optimize this later (interface or not)
-                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Source.Tag)).Key; //optimize later! (reverse direction?)
+                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Source)).Key; //optimize later! (reverse direction?)
                         q = appliedRule.L.Vm.M[q];
                         q = appliedMatch.Vm.M[q];
-                        newSource = q.Clone() as Node; //unnecessary clone?
+                        newSource = q; //unnecessary clone?
+                        //Console.WriteLine(newSource.ToString());
                     }
                     else {
+                        //Console.WriteLine($"Considered not interface: {e.Source}");
                         if (!freshMapping.M.ContainsKey(e.Source)) {
                             int newIndex;
                             if (removedIndeces.Count > 0) {
@@ -125,19 +147,23 @@ namespace GraphRewriteEngine
                                 maxIndex++;
                                 newIndex = maxIndex;
                             }
-                            freshMapping.M[e.Source] = new Node(newIndex, e.Source.Tag); //Ah, deal with labels!
+                            Node toAdd = new Node(newIndex, e.Source.Tag);
+                            freshMapping.M[e.Source] = toAdd; //Ah, deal with labels!
+                            this.generated.AddVertex(toAdd);
                         }
                         newSource = freshMapping.M[e.Source];
                     }
                     //check Target (consider making LEdge indexable...)
                     Node newTarget;
                     if(appliedRule.IsInterface(e.Target)) { //optimize this later (interface or not)
-                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Target.Tag)).Key; //optimize later! 
+                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Target)).Key; //optimize later! 
                         q = appliedRule.L.Vm.M[q];              //(reverse direction possible due to injectivity assumption)
                         q = appliedMatch.Vm.M[q];
-                        newTarget = q.Clone() as Node; //if IsInterface, mapping already exists
+                        newTarget = q; //if IsInterface, mapping already exists
+                        //Console.WriteLine(newTarget.ToString());
                     }
                     else {
+                        //Console.WriteLine($"Considered not interface: {e.Target}");
                         if (!freshMapping.M.ContainsKey(e.Target)) {
                             int newIndex;
                             if (removedIndeces.Count > 0) {
@@ -147,21 +173,25 @@ namespace GraphRewriteEngine
                                 maxIndex++;
                                 newIndex = maxIndex;
                             }
-                            freshMapping.M[e.Target] = new Node(newIndex, e.Target.Tag); //Ah, deal with labels!
+                            Node toAdd = new Node(newIndex, e.Target.Tag);
+                            freshMapping.M[e.Target] = toAdd; //Ah, deal with labels!
+                            this.generated.AddVertex(toAdd);
                         }
                         newTarget = freshMapping.M[e.Target];
                     }
 
                     //add edge constructed from new (Source, Target)
                     LEdge newEdge = new LEdge(newSource, newTarget, e.Tag); //add label
-                    if (this.generated.ContainsEdge(newEdge)) {  //contains check unnecessary?
-                        this.generated.AddVerticesAndEdge(newEdge); 
+                    if (!this.generated.ContainsEdge(newEdge)) {  //contains check unnecessary?
+                        //Console.WriteLine($"adding: {newEdge}");
+                        this.generated.AddEdge(newEdge); 
                     }
                 }
             }
             //The final vertex pass to add fresh verteces
+            
             foreach (Node v in appliedRule.RHS.Vertices) {
-                if (!appliedRule.IsInterface(v)) {
+                if (!appliedRule.IsInterface(v)) { //add connectivity check
                     Node newNode;
                     if (!freshMapping.M.ContainsKey(v)) {
                         int newIndex;
@@ -182,6 +212,7 @@ namespace GraphRewriteEngine
                     }
                 }
             }
+            
             return index;
         }
 
