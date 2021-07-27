@@ -30,10 +30,16 @@ namespace GraphRewriteEngine
                 if (!L.Vm.Values().Contains(v)) {
                     v.Tag = "o";
                 }
+                else {
+                    v.Tag = "i";
+                }
             }
             foreach (LEdge e in LHS.Edges) {
                 if (!L.Em.Values().Contains(e)) {
                     e.Tag = "o";
+                }
+                else {
+                    e.Tag = "i";
                 }
             }
             //Tag as fresh
@@ -41,10 +47,16 @@ namespace GraphRewriteEngine
                 if (!L.Vm.Values().Contains(v)) {
                     v.Tag = "f";
                 }
+                else {
+                    v.Tag = "i";
+                }
             }
             foreach (LEdge e in RHS.Edges) {
                 if (!L.Em.Values().Contains(e)) {
                     e.Tag = "f";
+                }
+                else {
+                    e.Tag = "i";
                 }
             }
         } 

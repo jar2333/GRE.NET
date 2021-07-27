@@ -51,8 +51,7 @@ namespace GraphRewriteEngine
 
         public int Step() { //a derivation step, returns index of applied rule (perhaps tuple with index AND previous graph?)
             //iterate over each Grammar rule and store applicable ones:
-            Rule[] applicableRules = new Rule[grammar.Size];
-            Array.Clear(applicableRules, 0, grammar.Size);
+            var applicableRules = new Dictionary<int, Rule>();
             var applicableMatches = new Dictionary<int, Morphism>();
             for (int i = 0; i < grammar.Size; i++) {
                 Rule r = grammar.GetRule(i);
@@ -67,7 +66,33 @@ namespace GraphRewriteEngine
             Rule appliedRule = applicableRules[index];
             Morphism appliedMatch = applicableMatches[index];
 
-            //Actually rewrite the graph
+            //Actually rewrite the graph (kinda hacky, excuse my implementation)
+            //Remove m(e), m(v) for each obsolete e, v. Store indeces in stack!
+            int maxIndex = this.generated.VertexCount - 1; //indexing [0, ..., |V| - 1]
+            var removedIndeces = new Stack<int>();
+            foreach (LEdge e in appliedRule.LHS.Edges) {
+                if (e.Tag.Equals("o")) {
+                    generated.RemoveEdge(appliedMatch.Em.M[e]);
+                }
+            }
+            foreach (Node v in appliedRule.LHS.Vertices) {
+                if (v.Tag.Equals("o")) {
+                    removedIndeces.Push(v.Index);
+                    generated.RemoveVertex(appliedMatch.Vm.M[v]);
+                }
+            }
+            //Search RHS:
+            //instantiate a morphism for fresh nodes/edges -> new nodes/edges to be inserted to host
+            //for each fresh edge: 
+            //check source/target: 
+                //if "interface" node, use match morphism.
+                //if "fresh" 
+                    //if not in fresh morphism, add to it, using new indeces (either from stack, or new and increase max)
+                    //use fresh morphism to add edge to host
+            //for each fresh vertex (this whole process might be unnecessary for connected graphs)
+                //if not already added to fresh morphism, add to it and then host
+
+
             throw new NotImplementedException();
         }
 

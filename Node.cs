@@ -4,7 +4,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class Node : IEquatable<Node>, IComparable<Node>, ITagged<string> { //Add IComparable
+    public class Node : IEquatable<Node>, IComparable<Node>, ITagged<string>, ICloneable { //Add IComparable
         
         public int Index {get; set;}
         public string Tag {get; set;}
@@ -57,6 +57,10 @@ namespace GraphRewriteEngine
         //for indexing!
         public bool Equals(int i) { 
             return this.Index.Equals(i);
+        }
+
+        public object Clone() {
+            return new Node(this.Index, this.Tag);
         }
 
         //label equivalence is not node equality
