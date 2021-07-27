@@ -41,7 +41,7 @@ namespace GraphRewriteEngine
             foreach (Node v in r.LHS.Vertices) {
                 IEnumerable<LEdge> adjacent = this.generated.AdjacentEdges(v);
                 adjacent = adjacent.Where(e => !match.Em.Values().Contains(e));
-                if (adjacent.Any() && v.Tag.Equals("o")) { //should be impossible if applicable
+                if (adjacent.Any() && !r.IsInterface(v)) { //should be impossible if applicable
                     return false;
                 }
             }
@@ -49,7 +49,7 @@ namespace GraphRewriteEngine
             return true; 
         }
 
-        public int Step() { //a derivation step, returns index of applied rule (perhaps tuple with index AND previous graph?)
+        public int Step(int ruleIndex = -1) { //a derivation step, returns index of applied rule (perhaps tuple with index AND previous graph?)
             //iterate over each Grammar rule and store applicable ones:
             var applicableRules = new Dictionary<int, Rule>();
             var applicableMatches = new Dictionary<int, Morphism>();
@@ -61,24 +61,31 @@ namespace GraphRewriteEngine
                     applicableMatches[i] = match;
                 }
             }
-            //using Chooser, pick a rule
-            int index = chooser.Choose(applicableRules); //this is so ugly but whatever
+            
+            int index;
+            if (ruleIndex < 0) { //using Chooser, pick a rule. Default
+                index = chooser.Choose(applicableRules); //this is so ugly but whatever
+            }
+            else if (ruleIndex >= grammar.Size || !applicableRules.ContainsKey(ruleIndex) || !applicableMatches.ContainsKey(ruleIndex)) {
+                return -1; //invalid ruleIndex
+            }
+            else {
+                index = ruleIndex; //valid ruleIndex
+            }
             Rule appliedRule = applicableRules[index];
             Morphism appliedMatch = applicableMatches[index];
 
             //Actually rewrite the graph (kinda hacky, excuse my implementation)
-            var LHS = appliedRule.LHS;
-            var RHS = appliedRule.RHS;
             //Remove m(e), m(v) for each obsolete e, v. Store indeces in stack!
             int maxIndex = this.generated.VertexCount - 1; //indexing [0, ..., |V| - 1]
             var removedIndeces = new Stack<int>();
-            foreach (LEdge e in LHS.Edges) {
-                if (e.Tag.Equals("o")) {
+            foreach (LEdge e in appliedRule.LHS.Edges) {
+                if (!appliedRule.IsInterface(e)) {
                     generated.RemoveEdge(appliedMatch.Em.M[e]);
                 }
             }
-            foreach (Node v in LHS.Vertices) {
-                if (v.Tag.Equals("o")) {
+            foreach (Node v in appliedRule.LHS.Vertices) {
+                if (!appliedRule.IsInterface(v)) {
                     removedIndeces.Push(v.Index);
                     generated.RemoveVertex(appliedMatch.Vm.M[v]);
                 }
@@ -90,20 +97,104 @@ namespace GraphRewriteEngine
                 //if "interface" node, use match morphism.
                 //if "fresh" 
                     //if not in fresh morphism, add to it, using new indeces (either from stack, or new and increase max)
-                    //use fresh morphism to add edge to host
+                    //use fresh morphism to add define new Source/Target
+                //add edge with new (Source, Target)
             //for each fresh vertex (this whole process might be unnecessary for connected graphs)
                 //if not already added to fresh morphism, add to it and then host
-            Morphism freshMorphism = new Morphism();
+            NodeMapping freshMapping = new NodeMapping(); //Make a node mapping
             foreach(LEdge e in appliedRule.RHS.Edges) {
-                //check Source
+                if (appliedRule.IsInterface(e)) {
+                    this.generated.AddEdge(e.Clone() as LEdge); //if an edge is interface, so must its nodes be. (interface graph cannot have dangling edges)
+                }
+                else { //optimize this later (interface or not)
+                    //check Source
+                    Node newSource;
+                    if(appliedRule.IsInterface(e.Source)) { //optimize this later (interface or not)
+                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Source.Tag)).Key; //optimize later! (reverse direction?)
+                        q = appliedRule.L.Vm.M[q];
+                        q = appliedMatch.Vm.M[q];
+                        newSource = q.Clone() as Node; //unnecessary clone?
+                    }
+                    else {
+                        if (!freshMapping.M.ContainsKey(e.Source)) {
+                            int newIndex;
+                            if (removedIndeces.Count > 0) {
+                                newIndex = removedIndeces.Pop();
+                            }
+                            else {
+                                maxIndex++;
+                                newIndex = maxIndex;
+                            }
+                            freshMapping.M[e.Source] = new Node(newIndex); //Ah, deal with labels!
+                        }
+                        newSource = freshMapping.M[e.Source];
+                    }
+                    //check Target (consider making LEdge indexable...)
+                    Node newTarget;
+                    if(appliedRule.IsInterface(e.Target)) { //optimize this later (interface or not)
+                        Node q = appliedRule.R.Vm.M.FirstOrDefault(x => x.Value.Equals(e.Target.Tag)).Key; //optimize later! (reverse direction?)
+                        q = appliedRule.L.Vm.M[q];
+                        q = appliedMatch.Vm.M[q];
+                        newTarget = q.Clone() as Node; //if ends with "|i", mapping already exists
+                    }
+                    else {
+                        if (!freshMapping.M.ContainsKey(e.Target)) {
+                            int newIndex;
+                            if (removedIndeces.Count > 0) {
+                                newIndex = removedIndeces.Pop();
+                            }
+                            else {
+                                maxIndex++;
+                                newIndex = maxIndex;
+                            }
+                            freshMapping.M[e.Target] = new Node(newIndex); //Ah, deal with labels!
+                        }
+                        newTarget = freshMapping.M[e.Target];
+                    }
 
+                    //add edge constructed from new (Source, Target)
+                    LEdge newEdge = new LEdge(newSource, newTarget, e.Tag); //add label
+                    if (this.generated.ContainsEdge(newEdge)) {  //contains check unnecessary?
+                        this.generated.AddEdge(newEdge); 
+                    }
+                }
             }
+            //The final vertex pass to add fresh verteces
+            foreach (Node v in appliedRule.RHS.Vertices) {
+                if (!appliedRule.IsInterface(v)) {
+                    Node newNode;
+                    if (!freshMapping.M.ContainsKey(v)) {
+                        int newIndex;
+                        if (removedIndeces.Count > 0) {
+                            newIndex = removedIndeces.Pop();
+                        }
+                        else {
+                            maxIndex++;
+                            newIndex = maxIndex;
+                        }
+                        freshMapping.M[v] = new Node(newIndex); //Ah, deal with labels!
+                    }
+                    newNode = freshMapping.M[v];
 
+                    //add node
+                    if (!this.generated.ContainsVertex(newNode)) { //contains check unnecessary?
+                        this.generated.AddVertex(newNode); 
+                    }
+                }
+            }
             return index;
         }
 
-        public void Recreate(IEnumerable<int> steps) {
-            throw new NotImplementedException(); //skips picker procedure, recreates specific derivation (catch invalid sequences)
+        public bool Recreate(IEnumerable<int> steps) {
+            //skips picker procedure, recreates specific derivation (catch invalid sequences)
+            foreach (int i in steps) {
+                int index = this.Step(i);
+                if (index < 0) {
+                    Reset();
+                    return false; //recreation failed
+                }
+            }
+            return true;
         }
 
 

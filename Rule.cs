@@ -13,6 +13,9 @@ namespace GraphRewriteEngine
         public Morphism L;
         public Morphism R;
 
+        public Dictionary<Node, bool> interfaceNodes;
+        public Dictionary<LEdge, bool> interfaceEdges;
+
         public Rule(UndirectedGraph<Node, LEdge> LHS, UndirectedGraph<Node, LEdge> RHS, 
                     UndirectedGraph<Node, LEdge> I, Morphism L, Morphism R) {
             this.LHS = LHS;
@@ -21,48 +24,56 @@ namespace GraphRewriteEngine
             this.L = L;
             this.R = R;
 
-            AddRuleTags();
+            interfaceNodes = new Dictionary<Node, bool>();
+            interfaceEdges = new Dictionary<LEdge, bool>();
+
+            CacheInterface();
         }
 
-        private void AddRuleTags() {
+        public bool IsInterface(Node v) {
+            return interfaceNodes[v];
+        }
+
+        public bool IsInterface(LEdge e) {
+            return interfaceEdges[e];
+        }
+
+        private void CacheInterface() {
             //Tag as obsolete
             foreach (Node v in LHS.Vertices) {
-                if (!L.Vm.Values().Contains(v)) {
-                    v.Tag = "o";
+                if (L.Vm.Values().Contains(v)) {
+                    interfaceNodes[v] = true;
                 }
                 else {
-                    v.Tag = "i";
+                    interfaceNodes[v] = false;
                 }
             }
             foreach (LEdge e in LHS.Edges) {
-                if (!L.Em.Values().Contains(e)) {
-                    e.Tag = "o";
+                if (L.Em.Values().Contains(e)) {
+                    interfaceEdges[e] = true;
                 }
                 else {
-                    e.Tag = "i";
+                    interfaceEdges[e] = false;
                 }
             }
             //Tag as fresh
             foreach (Node v in RHS.Vertices) {
-                if (!L.Vm.Values().Contains(v)) {
-                    v.Tag = "f";
+                if (L.Vm.Values().Contains(v)) {
+                    interfaceNodes[v] = true;
                 }
                 else {
-                    v.Tag = "i";
+                    interfaceNodes[v] = false;
                 }
             }
             foreach (LEdge e in RHS.Edges) {
                 if (!L.Em.Values().Contains(e)) {
-                    e.Tag = "f";
+                    interfaceEdges[e] = true;
                 }
                 else {
-                    e.Tag = "i";
+                    interfaceEdges[e] = false;
                 }
             }
-        } 
-
-
-
-
+                
+        }
     }
 }

@@ -5,7 +5,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class LEdge : IEdge<Node>, IEquatable<LEdge>, ITagged<string> { //add IComparable
+    public class LEdge : IEdge<Node>, IEquatable<LEdge>, ITagged<string>, ICloneable { //add IComparable
 
         public string Tag { get; set; }
         public Node Source { get; set; }
@@ -57,6 +57,10 @@ namespace GraphRewriteEngine
             }
             return this.Source.Equals(e.Source) && this.Target.Equals(e.Target);
                     //|| this.Source.Equals(e.Target) && this.Target.Equals(e.Source);
+        }
+
+        public object Clone() {
+            return new LEdge(this.Source.Clone() as Node, this.Target.Clone() as Node);
         }
 
         public bool IsEquivalent(LEdge e) {
