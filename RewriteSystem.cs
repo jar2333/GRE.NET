@@ -12,7 +12,7 @@ namespace GraphRewriteEngine
         //A "Picker" interface for classes that choose the next applicable grammar rule to use (can be stochastic!)
         public Grammar grammar;
 
-        public IMapper mapper; //the mapper should determine for itself how the morphism returned by "Find" is determined (stochastically, lazily, etc)
+        public IMatcher mapper; //the mapper should determine for itself how the morphism returned by "Find" is determined (stochastically, lazily, etc)
 
         public IChooser chooser;
 
@@ -20,7 +20,7 @@ namespace GraphRewriteEngine
 
         public UndirectedGraph<Node, LEdge> generated;
 
-        public RewriteSystem(Grammar G, IMapper m, IChooser c, UndirectedGraph<Node, LEdge> a) {
+        public RewriteSystem(Grammar G, IMatcher m, IChooser c, UndirectedGraph<Node, LEdge> a) {
             this.grammar = G;
             this.axiom = a;
             this.mapper = m;
@@ -67,15 +67,17 @@ namespace GraphRewriteEngine
             Morphism appliedMatch = applicableMatches[index];
 
             //Actually rewrite the graph (kinda hacky, excuse my implementation)
+            var LHS = appliedRule.LHS;
+            var RHS = appliedRule.RHS;
             //Remove m(e), m(v) for each obsolete e, v. Store indeces in stack!
             int maxIndex = this.generated.VertexCount - 1; //indexing [0, ..., |V| - 1]
             var removedIndeces = new Stack<int>();
-            foreach (LEdge e in appliedRule.LHS.Edges) {
+            foreach (LEdge e in LHS.Edges) {
                 if (e.Tag.Equals("o")) {
                     generated.RemoveEdge(appliedMatch.Em.M[e]);
                 }
             }
-            foreach (Node v in appliedRule.LHS.Vertices) {
+            foreach (Node v in LHS.Vertices) {
                 if (v.Tag.Equals("o")) {
                     removedIndeces.Push(v.Index);
                     generated.RemoveVertex(appliedMatch.Vm.M[v]);
@@ -91,9 +93,13 @@ namespace GraphRewriteEngine
                     //use fresh morphism to add edge to host
             //for each fresh vertex (this whole process might be unnecessary for connected graphs)
                 //if not already added to fresh morphism, add to it and then host
+            Morphism freshMorphism = new Morphism();
+            foreach(LEdge e in appliedRule.RHS.Edges) {
+                //check Source
 
+            }
 
-            throw new NotImplementedException();
+            return index;
         }
 
         public void Recreate(IEnumerable<int> steps) {

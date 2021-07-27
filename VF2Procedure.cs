@@ -5,7 +5,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine {
 
-    public abstract class VF2Procedure: IMapper {
+    public abstract class VF2Procedure: IMatcher {
 
         public UndirectedGraph<Node, LEdge> pattern;
         public UndirectedGraph<Node, LEdge> host;

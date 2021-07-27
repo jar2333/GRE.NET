@@ -4,7 +4,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine 
 {
-    public interface IMapper {
+    public interface IMatcher {
 
         Morphism Find(UndirectedGraph<Node, LEdge> G1, UndirectedGraph<Node, LEdge> G2);
 
