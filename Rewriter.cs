@@ -5,7 +5,7 @@ using QuikGraph;
 
 namespace GraphRewriteEngine
 {
-    public class RewriteSystem{ //make an abstract class?
+    public class Rewriter{ //make an abstract class?
 
         //grammar, axiom, controlled derivation step by step or until termination condition
         //Assumes DPO approach, split class for SPO later?
@@ -20,7 +20,7 @@ namespace GraphRewriteEngine
 
         public UndirectedGraph<Node, LEdge> generated;
 
-        public RewriteSystem(Grammar G, IMatcher m, IChooser c, UndirectedGraph<Node, LEdge> a) {
+        public Rewriter(Grammar G, IMatcher m, IChooser c, UndirectedGraph<Node, LEdge> a) {
             this.grammar = G;
             this.axiom = a;
             this.mapper = m;
@@ -124,7 +124,10 @@ namespace GraphRewriteEngine
                     t = appliedRule.L.Vm.M[t];
                     t = appliedMatch.Vm.M[t];
 
-                    this.generated.AddEdge(new LEdge(s, t)); 
+                    LEdge toAdd = new LEdge(s, t, e.Tag);
+                    if (!this.generated.ContainsEdge(toAdd)) { //necessary?
+                        this.generated.AddEdge(toAdd);
+                    }
                 }
                 else { //optimize this later (interface or not)
                     //check Source
