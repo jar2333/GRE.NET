@@ -47,7 +47,7 @@ namespace GraphRewriteEngine
 
         public override string ToString()
         {
-            return $"e({this.Source.ToString()}, {this.Target.ToString()}):L.{this.Tag}";
+            return $"e({this.Source.ToString()}, {this.Target.ToString()}).L:{this.Tag}";
         }
 
         //Should this be one-sided? Does this two-sided implementation mess things up?
