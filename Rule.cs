@@ -6,6 +6,43 @@ using QuikGraph;
 namespace GraphRewriteEngine
 {
     public class Rule { //This whole representation might be entirely unnecesary, we'll see!
+
+        //Change to fit the following scheme (as per that one paper...):
+        //LHS Array: Application conditions evaluation.
+            // ∃ a match of LHS[0] and
+            //!∃ a match of LHS[1] and
+            //!∃ a match of LHS[2] and
+            //...
+            //!∃ a match of LHS[LHS.Length-1]
+        //The ith condition is valid if the (i+1)th condition is true.
+        //The match of LHS[i] shares interface nodes/edges with the matches of LHS[j] for all j > i.
+
+        //RHS Array: Different replacement choices
+        //Questions: 
+            //Should probabilities be given at the level of rule or grammar?
+                //That is, ProbabilisticRule subclass vs ProbabilisticGrammar subclass
+                    //As defined by Mosbah, each different RHS for a given LHS is assinged a probability.
+                    //This is easier to keep track of by encapsulating the probabilities in parallel to the RHSs
+            //At what level does the IChooser operate?
+                //Choose between rules vs choose between RHS _in_ a rule
+                //Proposed implementation:
+                    //IChoosers work on both layers, by using a pair of indeces:
+                        //Choose among rules (assumed to be applicable)
+                            //Self-contained choosing procedure
+                            //for example, discrete uniform random sampling the index i
+                        //Once rule is chosen, choose among RHS 
+                            //Self-contained choosing procedure
+                            //for example, production weight discrete distribution sampling the index j
+                        //Return (i, j)
+                            //This is used at the Rewriter layer.
+
+        //Add a new methods and properties: 
+            //bool IsApplicable(Graph host, IMatcher m)
+                //Checks if application conditions clear
+            //Graph GetProduction(int i)
+            //For ProbabilisticRule class:
+            //double[] weights = new double[RHS.Length];
+            //void InitializeUniform()
         public UndirectedGraph<Node, LEdge> LHS;
         public UndirectedGraph<Node, LEdge> RHS;
         public UndirectedGraph<Node, LEdge> I;
@@ -43,7 +80,7 @@ namespace GraphRewriteEngine
         }
 
         private void CacheInterface() {
-            //Tag as obsolete
+            //Cache as obsolete
             foreach (Node v in LHS.Vertices) {
                 if (L.Vm.Values().Contains(v)) {
                     interfaceNodes[v] = true;
@@ -60,7 +97,7 @@ namespace GraphRewriteEngine
                     interfaceEdges[e] = false;
                 }
             }
-            //Tag as fresh
+            //Cache as fresh
             foreach (Node v in RHS.Vertices) {
                 if (R.Vm.Values().Contains(v)) {
                     interfaceNodes[v] = true;
