@@ -17,29 +17,7 @@ namespace GraphRewriteEngine {
             this.morphisms = new List<Morphism>();
         }
 
-        //Main procedure, avoid the recursion (fix later)
-        public void VF2(NodeMapping m) {
-            if (m.Covers(pattern.Vertices)) {
-                //Getting the edge mapping from a given valid Ind node mapping is straightforward
-                ICollection<Node> D = m.M.Keys;
-                IEnumerable<LEdge> E1 = pattern.Edges.Where(e => D.Contains(e.Source) && D.Contains(e.Target));
-                var edgeMap = new Dictionary<LEdge, LEdge>(); 
-                foreach (var e in E1) {
-                    edgeMap[e] = new LEdge(m.M[e.Source], m.M[e.Target]);
-                }
-                this.morphisms.Add(new Morphism(m, new EdgeMapping(edgeMap)));
-            }
-            else {
-                IEnumerable<Node[]> candidatePairs = Candidates(m);
-                foreach (var p in candidatePairs) {
-                    if (Cons(m, p) && !Cut(m, p)) {
-                        VF2(m.Extend(p[0], p[1]));
-                    }
-                }
-            }
-        }
-
-        
+        //Main procedure     
         public void VF2(int iter) {
             Stack<NodeMapping> mapStack = new Stack<NodeMapping>();
             mapStack.Push(new NodeMapping());
