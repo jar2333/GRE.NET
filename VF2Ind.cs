@@ -39,7 +39,7 @@ namespace GraphRewriteEngine
                 }
             }
 
-            foreach (Node u in pattern.AdjacentVertices(p[0]).Intersect(D)) { //Not every mapping fails here
+            foreach (Node u in AdjacentVertices(pattern, p[0]).Intersect(D)) { //Not every mapping fails here
                 if (!host.Edges.Contains(new LEdge(m.M[u], p[1]))) {
                     //Console.WriteLine($"{e.ToString()} not contained?");
                     //host.Edges.All(x => {Console.Write($"{x.ToString()}, "); return true;});
@@ -49,7 +49,7 @@ namespace GraphRewriteEngine
             }
             //the induced subgraphs are only useful for Cons(m)
             //For the following checks, we use the global graphs (global vertex/edge sets, as delineated in the paper)
-            foreach (Node v in host.AdjacentVertices(p[1]).Intersect(R)) { 
+            foreach (Node v in AdjacentVertices(host, p[1]).Intersect(R)) { 
                 if (!pattern.Edges.Contains(new LEdge(p[0], m.M.FirstOrDefault(x => x.Value.Equals(v)).Key))) {
                     return false; 
                 }
@@ -74,13 +74,13 @@ namespace GraphRewriteEngine
             IEnumerable<Node> TH1 = uV1.Except(T1);
             IEnumerable<Node> TH2 = uV2.Except(T2);
 
-            bool A = host.AdjacentVertices(p[1]).Intersect(T2).Count() < pattern.AdjacentVertices(p[0]).Intersect(T1).Count();
-            bool B = host.AdjacentVertices(p[1]).Intersect(TH2).Count() < pattern.AdjacentVertices(p[0]).Intersect(TH1).Count();
+            bool A = AdjacentVertices(host, p[1]).Intersect(T2).Count() < AdjacentVertices(pattern, p[0]).Intersect(T1).Count();
+            bool B = AdjacentVertices(host, p[1]).Intersect(TH2).Count() < AdjacentVertices(pattern, p[0]).Intersect(TH1).Count();
 
             return A || B;
         }
 
-        public override Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override Morphism Find(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host)
         {
             this.pattern = pattern;
             this.host = host;
@@ -88,7 +88,7 @@ namespace GraphRewriteEngine
             return morphisms.FirstOrDefault();
         }
 
-        public override IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host, int iter = 0)
+        public override IList<Morphism> Enumerate(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host, int iter = 0)
         {
             this.pattern = pattern;
             this.host = host;
@@ -96,7 +96,7 @@ namespace GraphRewriteEngine
             return morphisms;
         }
 
-        public override bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host)
+        public override bool Exists(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host)
         {
             this.pattern = pattern;
             this.host = host;

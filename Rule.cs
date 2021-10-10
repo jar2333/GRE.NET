@@ -44,9 +44,9 @@ namespace GraphRewriteEngine
             //double[] weights = new double[RHS.Length];
             //double[] GetWeights()
             //void InitializeUniform()
-        public UndirectedGraph<Node, LEdge> LHS;
-        public UndirectedGraph<Node, LEdge> RHS;
-        public UndirectedGraph<Node, LEdge> I;
+        public BidirectionalGraph<Node, LEdge> LHS;
+        public BidirectionalGraph<Node, LEdge> RHS;
+        public BidirectionalGraph<Node, LEdge> I;
 
         public Morphism L;
         public Morphism R;
@@ -54,8 +54,8 @@ namespace GraphRewriteEngine
         public Dictionary<Node, bool> interfaceNodes;
         public Dictionary<LEdge, bool> interfaceEdges;
 
-        public Rule(UndirectedGraph<Node, LEdge> LHS, UndirectedGraph<Node, LEdge> RHS, 
-                    UndirectedGraph<Node, LEdge> I, Morphism L, Morphism R) {
+        public Rule(BidirectionalGraph<Node, LEdge> LHS, BidirectionalGraph<Node, LEdge> RHS, 
+                    BidirectionalGraph<Node, LEdge> I, Morphism L, Morphism R) {
             this.LHS = LHS;
             this.RHS = RHS;
             this.I = I;

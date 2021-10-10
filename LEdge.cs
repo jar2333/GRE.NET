@@ -24,14 +24,8 @@ namespace GraphRewriteEngine
         }
 
         public LEdge(Node a, Node b, string tag) {
-            if (a.Index < b.Index) {
-                this.Source = a;
-                this.Target = b; 
-            }
-            else {
-                this.Source = b; 
-                this.Target = a; 
-            }
+            this.Source = a;
+            this.Target = b;             
             this.Tag = tag;
         }
 

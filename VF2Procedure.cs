@@ -7,8 +7,8 @@ namespace GraphRewriteEngine {
 
     public abstract class VF2Procedure: IMatcher {
 
-        public UndirectedGraph<Node, LEdge> pattern;
-        public UndirectedGraph<Node, LEdge> host;
+        public BidirectionalGraph<Node, LEdge> pattern;
+        public BidirectionalGraph<Node, LEdge> host;
 
         public List<Morphism> morphisms;
 
@@ -49,8 +49,8 @@ namespace GraphRewriteEngine {
         }
 
         //purely helper method (perhaps optimize with Linq)
-        public bool ExistsUncoveredNeighbor(Node v, IEnumerable<Node> V, UndirectedGraph<Node, LEdge> G) {
-            IEnumerable<Node> neighbors = G.AdjacentVertices(v);
+        public bool ExistsUncoveredNeighbor(Node v, IEnumerable<Node> V, BidirectionalGraph<Node, LEdge> G) {
+            IEnumerable<Node> neighbors = AdjacentVertices(G, v);
             foreach (var node in V) {
                 if (neighbors.Contains(node)) {
                     return true;
@@ -67,6 +67,20 @@ namespace GraphRewriteEngine {
                 select new[] {first, second};
 
             return product; //this returns an array of Node arrays I think
+        }
+
+        public IEnumerable<Node> AdjacentVertices(BidirectionalGraph<Node, LEdge> G, Node n) {
+            IEnumerable<LEdge> adjacentEdges = G.InEdges(n).Concat(G.OutEdges(n));
+            List<Node> adjacentVertices = new List<Node>();
+            foreach (var e in adjacentEdges) {
+                if (e.Source.Equals(n)) {
+                    adjacentVertices.Add(e.Target);
+                }
+                else {
+                    adjacentVertices.Add(e.Source);
+                }
+            }
+            return adjacentVertices.AsEnumerable<Node>();
         }
 
         //Yeah, make a mapping class, with IEnumerables for D(m) and R(m)
@@ -91,11 +105,11 @@ namespace GraphRewriteEngine {
 
 
         //Interface methods
-        public abstract Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
+        public abstract Morphism Find(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host);
 
-        public abstract IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host, int iter = 0);
+        public abstract IList<Morphism> Enumerate(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host, int iter = 0);
 
-        public abstract bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host);
+        public abstract bool Exists(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host);
 
     }
 

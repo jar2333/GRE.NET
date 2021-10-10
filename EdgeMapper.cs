@@ -13,7 +13,7 @@ namespace GraphRewriteEngine {
             this.morphisms = new List<Morphism>();
         }
 
-        public void EdgeSearch(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host, bool searchAll) {
+        public void EdgeSearch(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host, bool searchAll) {
             LEdge A = pattern.Edges.First();
             if (!searchAll) {
                 LEdge e = host.Edges.FirstOrDefault(x => x.IsEquivalent(A));
@@ -33,17 +33,17 @@ namespace GraphRewriteEngine {
             }
         }
 
-        public Morphism Find(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
+        public Morphism Find(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host) {
             EdgeSearch(pattern, host, false);
             return morphisms.FirstOrDefault();
         }
 
-        public IList<Morphism> Enumerate(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host, int iter = 0) {
+        public IList<Morphism> Enumerate(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host, int iter = 0) {
             EdgeSearch(pattern, host, true);
             return morphisms;
         }
 
-        public bool Exists(UndirectedGraph<Node, LEdge> pattern, UndirectedGraph<Node, LEdge> host) {
+        public bool Exists(BidirectionalGraph<Node, LEdge> pattern, BidirectionalGraph<Node, LEdge> host) {
             EdgeSearch(pattern, host, false);
             return morphisms.Count > 0;
         }

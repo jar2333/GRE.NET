@@ -16,11 +16,11 @@ namespace GraphRewriteEngine
 
         public IChooser chooser;
 
-        public UndirectedGraph<Node, LEdge> axiom;
+        public BidirectionalGraph<Node, LEdge> axiom;
 
-        public UndirectedGraph<Node, LEdge> generated;
+        public BidirectionalGraph<Node, LEdge> generated;
 
-        public Rewriter(Grammar G, IMatcher m, IChooser c, UndirectedGraph<Node, LEdge> a) {
+        public Rewriter(Grammar G, IMatcher m, IChooser c, BidirectionalGraph<Node, LEdge> a) {
             this.grammar = G;
             this.axiom = a;
             this.mapper = m;
@@ -32,14 +32,14 @@ namespace GraphRewriteEngine
             this.generated = this.axiom.Clone();
         }
 
-        public UndirectedGraph<Node, LEdge> GetGraph() {
+        public BidirectionalGraph<Node, LEdge> GetGraph() {
             return this.generated;
         }
 
         public bool IsApplicable(Rule r, Morphism match) { //DPO conditions for existence of context
             //Condition 1
             foreach (Node v in r.LHS.Vertices) {
-                IEnumerable<LEdge> adjacent = this.generated.AdjacentEdges(match.Vm.M[v]);
+                IEnumerable<LEdge> adjacent = AdjacentEdges(this.generated, match.Vm.M[v]);
                 adjacent = adjacent.Where(e => !match.Em.Values().Contains(e));
                 if (adjacent.Any() && !r.IsInterface(v)) { //should be impossible if applicable
                     return false;
@@ -230,6 +230,12 @@ namespace GraphRewriteEngine
             }
             return true;
         }
+
+        private IEnumerable<LEdge> AdjacentEdges(BidirectionalGraph<Node, LEdge> G, Node n) {
+            IEnumerable<LEdge> adjacentEdges = G.InEdges(n).Concat(G.OutEdges(n));
+            return adjacentEdges;
+        }
+
 
 
     }

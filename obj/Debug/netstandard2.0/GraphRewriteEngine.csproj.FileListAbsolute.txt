@@ -1,0 +1,9 @@
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\bin\Debug\netstandard2.0\GraphRewriteEngine.deps.json
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\bin\Debug\netstandard2.0\GraphRewriteEngine.dll
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\bin\Debug\netstandard2.0\GraphRewriteEngine.pdb
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\obj\Debug\netstandard2.0\GraphRewriteEngine.csprojAssemblyReference.cache
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\obj\Debug\netstandard2.0\GraphRewriteEngine.AssemblyInfoInputs.cache
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\obj\Debug\netstandard2.0\GraphRewriteEngine.AssemblyInfo.cs
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\obj\Debug\netstandard2.0\GraphRewriteEngine.csproj.CoreCompileInputs.cache
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\obj\Debug\netstandard2.0\GraphRewriteEngine.dll
+C:\Users\Jose A. Ramos\csharp-workspace\GraphRewriteEngine\obj\Debug\netstandard2.0\GraphRewriteEngine.pdb
