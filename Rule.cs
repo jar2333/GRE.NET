@@ -42,6 +42,7 @@ namespace GraphRewriteEngine
             //Graph GetProduction(int i)
             //For ProbabilisticRule class:
             //double[] weights = new double[RHS.Length];
+            //double[] GetWeights()
             //void InitializeUniform()
         public UndirectedGraph<Node, LEdge> LHS;
         public UndirectedGraph<Node, LEdge> RHS;
