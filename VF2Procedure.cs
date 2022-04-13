@@ -18,35 +18,7 @@ namespace GraphRewriteEngine {
         }
 
         //Main procedure     
-        public void VF2(int iter) {
-            Stack<NodeMapping> mapStack = new Stack<NodeMapping>();
-            mapStack.Push(new NodeMapping());
-            int i = 0; //the number of added morphisms
-            NodeMapping m;
-            while (mapStack.Count > 0 && (iter == 0 ? true : iter > i)) {
-                m = mapStack.Pop();
-                if (m.Covers(pattern.Vertices)) {
-                    //Getting the edge mapping from a given valid Ind node mapping is straightforward
-                    ICollection<Node> D = m.M.Keys;
-                    IEnumerable<LEdge> E1 = pattern.Edges.Where(e => D.Contains(e.Source) && D.Contains(e.Target));
-                    var edgeMap = new Dictionary<LEdge, LEdge>(); 
-                    foreach (var e in E1) {
-                        edgeMap[e] = new LEdge(m.M[e.Source], m.M[e.Target]);
-                    }
-                    this.morphisms.Add(new Morphism(m, new EdgeMapping(edgeMap)));
-                    i++;
-                }
-                else {
-                    IEnumerable<Node[]> candidatePairs = Candidates(m);
-                    foreach (var p in candidatePairs) {
-                        if (Cons(m, p) && !Cut(m, p)) {
-                            mapStack.Push(m.Extend(p[0], p[1]));
-                        }
-                    }
-                }
-            }
-
-        }
+        public abstract void VF2(int iter);
 
         //purely helper method (perhaps optimize with Linq)
         public bool ExistsUncoveredNeighbor(Node v, IEnumerable<Node> V, BidirectionalGraph<Node, LEdge> G) {
